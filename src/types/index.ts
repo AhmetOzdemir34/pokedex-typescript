@@ -13,5 +13,4 @@ export interface DetailPokemon {
     weight: number,
     sprites: any,
     moves: any,
-    types: any
 }

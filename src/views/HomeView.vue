@@ -2,7 +2,7 @@
   <div class="home max-w-7xl mx-auto">
     <img alt="Pokemon Logo" src="../assets/pokemon.png" class="w-10/12 mx-auto block sm:w-9/12 md:w-8/12 lg:w-1/2 animate-pulse">
     <div class="w-10/12 mx-auto sm:w-9/12 md:w-7/12 lg:w-1/2">
-      <input v-model="searchText" type="text" placeholder="Enter pokemon name or id" class="rounded-l p-2 bg-slate-300 w-11/12">
+      <input v-model="$store.state.value" type="text" placeholder="Enter pokemon name or id" class="rounded-l p-2 bg-slate-300 w-11/12">
       <button @click="searchResult()" type="button" class="w-1/12 p-2 rounded-r bg-yellow-500">
         <i class="fa-solid fa-magnifying-glass text-blue-600"></i>
       </button>
@@ -29,7 +29,7 @@
     </div>
     <div v-else class="mx-auto w-10/12 mt-10">
       <div class="flex flex-row flex-wrap items-center">
-        <div v-for="(e,i) in pokemons" :key="i" class="w-10/12 mx-auto sm:w-1/3 lg:w-1/4 p-3">
+        <div v-for="(e,i) in $store.state.pokemons" :key="i" class="w-10/12 mx-auto sm:w-1/3 lg:w-1/4 p-3">
           <div class="rounded bg-gray-200 p-2">
             <p class="text-center uppercase font-bold">{{e.name}}</p>
             <hr class="border-white"/>
@@ -58,36 +58,50 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, } from 'vue-property-decorator';
 import axios from "axios";
 import { SearchPokemon } from "../types/index";
+import {Action} from 'vuex-class';
+
 
 @Component
 export default class HomeView extends Vue {
-  
 
   searchText = "";
   results: any = null;
-  limit = 20;
+  limit = null as number;
   pokemon = {} as SearchPokemon;
-  pokemons = [] as SearchPokemon[];
+  //pokemons = [] as SearchPokemon[];
   isActive = true;
 
+  @Action('setAll')
+  setAll !: ()=> any;
+
   async mounted(){
-    for(let i=1;i<=this.limit;i++){
-      const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);
-      this.pokemons.push({
-        name: data.name,
-        id: data.id,
-        height: data.height,
-        weight: data.weight,
-        sprites: data.sprites
-      });
+    if(this.$store.state.pokemons.length===0){
+      this.limit = 20;
+    }else{
+      this.limit = this.$store.state.pokemons.length;
+    }
+    
+    if(this.$store.state.pokemons.length==0){
+      
+      for(let i=1;i<=this.limit;i++){
+        const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);
+        this.setAll({
+          name: data.name,
+          id: data.id,
+          height: data.height,
+          weight: data.weight,
+          sprites: data.sprites
+        })
+      }
+      
     }
   }
 
   async searchResult(){
-    const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${this.searchText}`);
+    const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${this.$store.state.value}`);
 
     this.pokemon = {
       name: data.name,
@@ -104,13 +118,13 @@ export default class HomeView extends Vue {
       this.limit += 20;
       for(let i=oldLimit+1;i<=this.limit;i++){
         const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);
-        this.pokemons.push({
-          name: data.name,
-          id: data.id,
-          height: data.height,
-          weight: data.weight,
-          sprites: data.sprites
-        });
+        this.setAll({
+        name: data.name,
+        id: data.id,
+        height: data.height,
+        weight: data.weight,
+        sprites: data.sprites
+      })
       }
     }else{
       this.isActive = false;
