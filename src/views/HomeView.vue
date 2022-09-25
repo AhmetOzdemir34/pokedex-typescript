@@ -29,7 +29,7 @@
     </div>
     <div v-else class="mx-auto w-10/12 mt-10">
       <div class="flex flex-row flex-wrap items-center">
-        <div v-for="(e,i) in results" :key="i" class="w-1/4 p-3">
+        <div v-for="(e,i) in pokemons" :key="i" class="w-10/12 mx-auto sm:w-1/3 lg:w-1/4 p-3">
           <div class="rounded bg-gray-200 p-2">
             <p class="text-center uppercase font-bold">{{e.name}}</p>
             <hr class="border-white"/>
@@ -51,7 +51,8 @@
         </div>
       </div>
       <p class="text-right px-3 font-bold">{{`Total Result: ${limit}`}}</p>
-      <p class="text-center text-blue-500 my-5 cursor-pointer hover:underline" @click="more()">{{"More"}}</p>
+      <p v-if="isActive" class="text-center text-blue-500 my-5 cursor-pointer hover:underline" @click="more()">{{"More"}}</p>
+      <p v-else class="text-center text-red-700 my-5 cursor-pointer hover:underline" >{{"All Pokemons was shown."}}</p>
     </div>
   </div>
 </template>
@@ -69,12 +70,13 @@ export default class HomeView extends Vue {
   results: any = null;
   limit = 20;
   pokemon = {} as SearchPokemon;
-  results = [] as SearchPokemon[];
+  pokemons = [] as SearchPokemon[];
+  isActive = true;
 
   async mounted(){
     for(let i=1;i<=this.limit;i++){
       const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);
-      this.results.push({
+      this.pokemons.push({
         name: data.name,
         id: data.id,
         height: data.height,
@@ -97,17 +99,21 @@ export default class HomeView extends Vue {
   }
 
   async more(){
-    let oldLimit =this.limit;
-    this.limit += 20;
-    for(let i=oldLimit+1;i<=this.limit;i++){
-      const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);
-      this.results.push({
-        name: data.name,
-        id: data.id,
-        height: data.height,
-        weight: data.weight,
-        sprites: data.sprites
-      });
+    if(this.limit<=860){
+      let oldLimit =this.limit;
+      this.limit += 20;
+      for(let i=oldLimit+1;i<=this.limit;i++){
+        const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);
+        this.pokemons.push({
+          name: data.name,
+          id: data.id,
+          height: data.height,
+          weight: data.weight,
+          sprites: data.sprites
+        });
+      }
+    }else{
+      this.isActive = false;
     }
   }
 }
