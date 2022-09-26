@@ -15,7 +15,7 @@
                         <p>Weight</p>
                     </div>
                 </div>
-                <div v-if="!favourite" @click="addFavs" class="w-[200px] p-2 text-center bg-green-500 text-white my-1 rounded cursor-pointer">Add to Favs</div>
+                <div v-if="!favourite" @click="addFavs" data-test="btn-favs-plus" class="w-[200px] p-2 text-center bg-green-500 text-white my-1 rounded cursor-pointer">Add to Favs</div>
                 <div v-else @click="discardItInFavs" class="w-[200px] p-2 text-center bg-red-500 text-white my-1 rounded cursor-pointer">Discard it in Favs</div>
                 
                 <hr class="border border-gray-200 w-full md:w-1/3 mt-3"/>
@@ -45,6 +45,8 @@
         favourite = false as boolean;
         
         async mounted(){
+            console.log(this.$route);
+            
             const result = await axios.get(`https://pokeapi.co/api/v2/pokemon/${this.$route.params.name}`);
             this.pokemon = {
                 id: result.data.id,
@@ -52,8 +54,7 @@
                 weight: result.data.weight,
                 height: result.data.height,
                 sprites: result.data.sprites,
-                moves: result.data.moves,
-                types: result.data.types
+                moves: result.data.moves
             }
             var ls = JSON.parse(localStorage.getItem('pokemons') as string) as [];
             if(!ls || ls.length===0){

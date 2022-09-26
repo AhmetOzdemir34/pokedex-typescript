@@ -1,10 +1,35 @@
 import { DetailPokemon } from "@/types";
 import { mount } from "@vue/test-utils";
+import flushPromises from "flush-promises";
 import axios from "axios";
 import PokemonView from "../../src/views/PokemonView.vue";
 
 describe('PokemonView.vue', ()=>{
-    
+    const localStorageMock = (function () {
+        let store = {} as any;
+      
+        return {
+          getItem(key:string) {
+            return store[key];
+          },
+      
+          setItem(key:string, value:any) {
+            store[key] = value;
+          },
+      
+          clear() {
+            store = {};
+          },
+      
+          removeItem(key:string) {
+            delete store[key];
+          },
+      
+          getAll() {
+            return store;
+          },
+        };
+      })();
     const pokemonMock:DetailPokemon = {
         name: "clefairy",
         id: 35,
@@ -33,37 +58,60 @@ describe('PokemonView.vue', ()=>{
     get.mockResolvedValue({data:pokemonMock})
 
     const getFailed = jest.spyOn(axios, 'get');
-    get.mockResolvedValue({data:'Not Found'})
+    get.mockResolvedValue({data:'Not Found'});
 
-    it('Should fetch pokemon data in detail page', ()=>{
+
+    it('should mount a page or view', ()=>{
         const wrapper = mount(PokemonView,{
             mocks: {
                 $route: {
-                params:{
-                    name:'clefairy'
-                }
-                }
-            }
+                    params:{
+                        name:'clefairy'
+                    }
+                },
+            },
         });
+        expect(wrapper.exists()).toBe(true);
+    })
+
+    it('Should fetch pokemon data in detail page', async ()=>{
+        const wrapper = mount(PokemonView,{
+            mocks: {
+                $route: {
+                    params:{
+                        name:'clefairy'
+                    }
+                },
+            },
+        });
+        /* await flushPromises();
+
+        const button = wrapper.find('[data-test="btn-favs-plus"]')
         
         // basarili api istegi
         expect(get).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/clefairy');
-        // favorilere ekleme butonu var oldu mu?
-        expect(wrapper.text()).toContain('Add to Favs');
+        expect(button.exists()).toBe(false); */
+        
     })
 
-    it('Should not fetch pokemon data with invalid params', ()=>{
+    it('Should not fetch pokemon data with invalid params', async ()=>{
         const wrapper = mount(PokemonView,{
             mocks: {
                 $route: {
-                params:{
-                    name:'invalid'
-                }
+                    params:{
+                        name:'invalid'
+                    }
                 }
             }
         });
 
-        expect(getFailed).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/invalid');
+        await flushPromises();
+        expect(getFailed).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/invalid');        
 
     })
+    //addFavs
+    /* it('Should be active plus button', async ()=>{
+        
+    }) */
+    //discardFavs
 })
