@@ -3,13 +3,13 @@
     <img alt="Pokemon Logo" src="../assets/pokemon.png" class="w-10/12 mx-auto block sm:w-9/12 md:w-8/12 lg:w-1/2 animate-pulse">
     <div class="w-10/12 mx-auto sm:w-9/12 md:w-7/12 lg:w-1/2">
       <input v-model="$store.state.value" type="text" placeholder="Enter pokemon name or id" class="rounded-l p-2 bg-slate-300 w-11/12">
-      <button @click="searchResult()" type="button" class="w-1/12 p-2 rounded-r bg-yellow-500">
+      <button @click="searchResult()" data-test="search" type="button" class="w-1/12 p-2 rounded-r bg-yellow-500">
         <i class="fa-solid fa-magnifying-glass text-blue-600"></i>
       </button>
     </div>
     <div v-if="pokemon.id" class="mt-5 w-7/12 mx-auto sm:w-6/12 md:w-5/12 lg:w-1/5">
       <div class="p-2 rounded bg-gray-200">
-        <p class="text-center uppercase font-bold">{{pokemon.name}}</p>
+        <p data-tes="pokemon-name" class="text-center uppercase font-bold">{{pokemon.name}}</p>
         <hr class="border-white"/>
         <img v-bind:src="pokemon.sprites.front_default" alt="no image" class="w-[150px] h-[150px] block mx-auto object-cover cursor-pointer">
         <div class="flex flex-row flex-nowrap justify-around items-center">
@@ -71,7 +71,6 @@ export default class HomeView extends Vue {
   results: any = null;
   limit = null as number;
   pokemon = {} as SearchPokemon;
-  //pokemons = [] as SearchPokemon[];
   isActive = true;
 
   @Action('setAll')

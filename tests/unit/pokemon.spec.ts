@@ -1,35 +1,10 @@
 import { DetailPokemon } from "@/types";
 import { mount } from "@vue/test-utils";
-import flushPromises from "flush-promises";
 import axios from "axios";
 import PokemonView from "../../src/views/PokemonView.vue";
 
 describe('PokemonView.vue', ()=>{
-    const localStorageMock = (function () {
-        let store = {} as any;
-      
-        return {
-          getItem(key:string) {
-            return store[key];
-          },
-      
-          setItem(key:string, value:any) {
-            store[key] = value;
-          },
-      
-          clear() {
-            store = {};
-          },
-      
-          removeItem(key:string) {
-            delete store[key];
-          },
-      
-          getAll() {
-            return store;
-          },
-        };
-      })();
+
     const pokemonMock:DetailPokemon = {
         name: "clefairy",
         id: 35,
@@ -52,14 +27,10 @@ describe('PokemonView.vue', ()=>{
                 }
             }
         ],
-    } ;
+    };
 
     const get = jest.spyOn(axios, 'get');
-    get.mockResolvedValue({data:pokemonMock})
-
-    const getFailed = jest.spyOn(axios, 'get');
-    get.mockResolvedValue({data:'Not Found'});
-
+    get.mockResolvedValue({data:pokemonMock});
 
     it('should mount a page or view', ()=>{
         const wrapper = mount(PokemonView,{
@@ -84,13 +55,9 @@ describe('PokemonView.vue', ()=>{
                 },
             },
         });
-        /* await flushPromises();
-
-        const button = wrapper.find('[data-test="btn-favs-plus"]')
         
         // basarili api istegi
         expect(get).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/clefairy');
-        expect(button.exists()).toBe(false); */
         
     })
 
@@ -105,13 +72,9 @@ describe('PokemonView.vue', ()=>{
             }
         });
 
-        await flushPromises();
+        const getFailed = jest.spyOn(axios, 'get');
+        getFailed.mockResolvedValue({data:'Not Found'});
         expect(getFailed).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/invalid');        
 
     })
-    //addFavs
-    /* it('Should be active plus button', async ()=>{
-        
-    }) */
-    //discardFavs
 })
