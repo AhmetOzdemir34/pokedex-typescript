@@ -49,7 +49,6 @@ describe('FavsView.vue', ()=>{
       const wrapper = mount(FavsView);
       expect(wrapper.text()).toContain('You have not any favourite pokemon(s).')
     });
-
     it('should mount page with real array', async ()=>{
       const mockValue = [{
         id:1, name:"bulbasaur", weight:69, height:7,
@@ -100,7 +99,6 @@ describe('FavsView.vue', ()=>{
       setLocalStorage("pokemons", mockValue);
       const wrapper = mount(FavsView);
       await wrapper.vm.$nextTick();
-      console.log(wrapper.html());
       
       expect(wrapper.get('p').text()).toEqual('bulbasaur');
       
@@ -121,11 +119,28 @@ describe('FavsView.vue', ()=>{
       setLocalStorage("pokemons", mockValue);
       const wrapper = mount(FavsView);
       await wrapper.vm.$nextTick();
-      console.log(wrapper.html());
       
       expect(wrapper.get('[data-test="pokemonImage"]').exists()).toBe(true);
     })
-
+    it('should show pokemon delete button', async ()=>{
+      const mockValue = [{
+        id:1, name:"bulbasaur", weight:69, height:7,
+        sprites: {
+          back_default: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png",
+          back_female: null,
+          back_shiny: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/1.png",
+          back_shiny_female: null,
+          front_default: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+          front_female: null,
+          front_shiny: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/1.png",
+          front_shiny_female: null,
+      }}];
+      setLocalStorage("pokemons", mockValue);
+      const wrapper = mount(FavsView);
+      await wrapper.vm.$nextTick();
+      
+      expect(wrapper.get('[data-test="delete"]').exists()).toBe(true);
+    })
     it('should show array whose length bigger than 1', async()=>{
       const mockValue = [{
         id:1, name:"bulbasaur", weight:69, height:7,
@@ -155,8 +170,30 @@ describe('FavsView.vue', ()=>{
       setLocalStorage("pokemons", mockValue);
       const wrapper = mount(FavsView);
       await wrapper.vm.$nextTick();
-      console.log(wrapper.html());
       expect(wrapper.findAll('[data-test="miniCard"]').length).toBe(2);
     });
+    it('should change page content before adding and deleting', async()=>{
+      const mockValue = [{
+        id:1, name:"bulbasaur", weight:69, height:7,
+        sprites: {
+          back_default: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png",
+          back_female: null,
+          back_shiny: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/1.png",
+          back_shiny_female: null,
+          front_default: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+          front_female: null,
+          front_shiny: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/1.png",
+          front_shiny_female: null,
+      }}];
+      setLocalStorage("pokemons", mockValue);
+      const wrapper = mount(FavsView);
 
+      expect(wrapper.findAll('[data-test="miniCard"]').length).toBe(1);
+
+      const buttonn = wrapper.get('[data-test="delete"]');
+      await buttonn.trigger('click');
+      wrapper.vm.$nextTick();
+      
+      expect(wrapper.text()).toContain('You have not any favourite pokemon(s).')
+    })
 })
