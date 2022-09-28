@@ -4,22 +4,21 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+export const mutations = {
+  SET_ALL(state:any, data:any){
+    state.pokemons.push(data);
+  }
+}
+export const state = {
+  value: "", // arama texti
+  pokemons: [] as SearchPokemon[],
+}
 export default new Vuex.Store({
-  state: {
-    value: "", // arama texti
-    pokemons: [] as SearchPokemon[],
-  }, 
+  state, 
   getters: {
   },
-  mutations: {
-    SET_ALL(state, data){
-      state.pokemons.push(data);
-    }
-  },
+  mutations,
   actions: {
-    setAll({commit}, data:any){
-      commit('SET_ALL',data);
-    }
   },
   modules: {
   }
