@@ -6,7 +6,7 @@
                     <div class="p-2 bg-slate-200">
                         <img v-bind:src="e.sprites.front_default" alt="no image" data-test="pokemonImage" class="w-[150px] h-[150px] mx-auto block">
                         <p class="text-center uppercase font-bold mb-2" data-test="name">{{e.name}}</p>
-                        <button type="button" @click="discardItInFavs(e.id)" class="text-center w-full block p-2 bg-red-500 hover:bg-red-400 transition-all duration-300">
+                        <button data-test="delete" type="button" @click="discardItInFavs(e.id)" class="text-center w-full block p-2 bg-red-500 hover:bg-red-400 transition-all duration-300">
                             <i class="fa-solid fa-trash text-white"></i>
                         </button>
                     </div>

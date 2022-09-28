@@ -29,11 +29,11 @@
     </div>
     <div v-else class="mx-auto w-10/12 mt-10">
       <div class="flex flex-row flex-wrap items-center">
-        <div v-for="(e,i) in $store.state.pokemons" :key="i" class="w-10/12 mx-auto sm:w-1/3 lg:w-1/4 p-3">
+        <div v-for="(e,i) in $store.state.pokemons" :key="i" data-test="init-cards" class="w-10/12 mx-auto sm:w-1/3 lg:w-1/4 p-3">
           <div class="rounded bg-gray-200 p-2">
             <p class="text-center uppercase font-bold">{{e.name}}</p>
             <hr class="border-white"/>
-            <img v-bind:src="e.sprites.front_default" alt="no image" class="w-[150px] h-[150px] block mx-auto object-cover cursor-pointer">
+            <img v-bind:src="e.sprites.other.home.front_default" alt="no image" class="w-[150px] h-[150px] block mx-auto object-cover cursor-pointer">
             <div class="flex flex-row flex-nowrap justify-around items-center">
               <div class="w-1/2 mx-auto">
                 <p class="text-3xl text-center italic">{{e.height}}</p>
@@ -61,7 +61,6 @@
 import { Component, Vue, } from 'vue-property-decorator';
 import axios from "axios";
 import { SearchPokemon } from "../types/index";
-import {Action} from 'vuex-class';
 
 
 @Component
@@ -69,14 +68,11 @@ export default class HomeView extends Vue {
 
   searchText = "";
   results: any = null;
-  limit = null as number;
+  limit = 0 as number;
   pokemon = {} as SearchPokemon;
   isActive = true;
 
-  @Action('setAll')
-  setAll !: ()=> any;
-
-  async mounted(){
+  async created(){
     if(this.$store.state.pokemons.length===0){
       this.limit = 20;
     }else{
@@ -86,17 +82,18 @@ export default class HomeView extends Vue {
     if(this.$store.state.pokemons.length==0){
       
       for(let i=1;i<=this.limit;i++){
-        const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);
-        this.setAll({
+        const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);        
+          this.$store.commit('SET_ALL',{
           name: data.name,
           id: data.id,
           height: data.height,
           weight: data.weight,
           sprites: data.sprites
-        })
+        })               
       }
       
     }
+    
   }
 
   async searchResult(){
@@ -117,7 +114,7 @@ export default class HomeView extends Vue {
       this.limit += 20;
       for(let i=oldLimit+1;i<=this.limit;i++){
         const {data} = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);
-        this.setAll({
+        this.$store.commit('SET_ALL',{
         name: data.name,
         id: data.id,
         height: data.height,

@@ -4,7 +4,7 @@
             <div class="flex flex-col justify-center items-center mt-5">
                 <h2 class="font-bold uppercase text-xl mb-2">{{pokemon.name}}</h2>
                 <hr  class="border border-gray-200 w-full md:w-1/3"/>
-                <img v-bind:src="pokemon.sprites.front_default" alt="no image" class="w-[250px] h-[250px] mx-auto object-cover">
+                <img v-bind:src="pokemon.sprites.other.home.front_default" alt="no image" class="w-[250px] h-[250px] mx-auto object-cover">
                 <div class="flex flex-row flex-nowrap gap-x-4 mb-3 w-full mx-auto sm:9/12 md:w-1/5">
                     <div class="w-5/12 mx-auto text-center">
                         <p class="text-3xl">{{pokemon.height}}</p>
@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div v-if="!favourite" @click="addFavs" data-test="btn-favs-plus" class="w-[200px] p-2 text-center bg-green-500 text-white my-1 rounded cursor-pointer">Add to Favs</div>
-                <div v-else @click="discardItInFavs" class="w-[200px] p-2 text-center bg-red-500 text-white my-1 rounded cursor-pointer">Discard it in Favs</div>
+                <div v-else @click="discardItInFavs" data-test="btn-favs-minus" class="w-[200px] p-2 text-center bg-red-500 text-white my-1 rounded cursor-pointer">Discard it in Favs</div>
                 
                 <hr class="border border-gray-200 w-full md:w-1/3 mt-3"/>
                 <h3 class="text-xl my-4">Moves</h3>
@@ -44,8 +44,7 @@
         pokemon = {} as DetailPokemon;
         favourite = false as boolean;
         
-        async mounted(){
-            console.log(this.$route);
+        async created(){
             
             const result = await axios.get(`https://pokeapi.co/api/v2/pokemon/${this.$route.params.name}`);
             this.pokemon = {
@@ -66,6 +65,7 @@
                     this.favourite = false;
                 }
             }
+            
         }
         addFavs(){
             var ls = JSON.parse(localStorage.getItem('pokemons') as string) as [];
