@@ -1,12 +1,14 @@
 <template>
   <div class="home max-w-7xl mx-auto">
     <img alt="Pokemon Logo" src="../assets/pokemon.png" class="w-10/12 mx-auto block sm:w-9/12 md:w-8/12 lg:w-1/2 animate-pulse">
+    <form @submit.prevent="searchResult()">
     <div class="w-10/12 mx-auto sm:w-9/12 md:w-7/12 lg:w-1/2">
       <input v-model="$store.state.value" type="text" placeholder="Enter pokemon name or id" class="rounded-l p-2 bg-slate-300 w-11/12">
-      <button @click="searchResult()" data-test="search" type="button" class="w-1/12 p-2 rounded-r bg-yellow-500">
+      <button data-test="search" type="button" class="w-1/12 p-2 rounded-r bg-yellow-500">
         <i class="fa-solid fa-magnifying-glass text-blue-600"></i>
       </button>
     </div>
+  </form>
     <div v-if="pokemon.id" class="mt-5 w-7/12 mx-auto sm:w-6/12 md:w-5/12 lg:w-1/5">
       <div class="p-2 rounded bg-gray-200">
         <p data-tes="pokemon-name" class="text-center uppercase font-bold">{{pokemon.name}}</p>
